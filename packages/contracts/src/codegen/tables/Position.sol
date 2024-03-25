@@ -179,7 +179,7 @@ library Position {
   /**
    * @notice Get the full data.
    */
-  function get(bytes32 key) internal view returns (uint32 x, uint32 y) {
+  function get(bytes32 key) internal view returns (int32 x, int32 y) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -194,7 +194,7 @@ library Position {
   /**
    * @notice Get the full data.
    */
-  function _get(bytes32 key) internal view returns (uint32 x, uint32 y) {
+  function _get(bytes32 key) internal view returns (int32 x, int32 y) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
@@ -209,7 +209,7 @@ library Position {
   /**
    * @notice Set the full data using individual values.
    */
-  function set(bytes32 key, uint32 x, uint32 y) internal {
+  function set(bytes32 key, int32 x, int32 y) internal {
     bytes memory _staticData = encodeStatic(x, y);
 
     PackedCounter _encodedLengths;
@@ -224,7 +224,7 @@ library Position {
   /**
    * @notice Set the full data using individual values.
    */
-  function _set(bytes32 key, uint32 x, uint32 y) internal {
+  function _set(bytes32 key, int32 x, int32 y) internal {
     bytes memory _staticData = encodeStatic(x, y);
 
     PackedCounter _encodedLengths;
@@ -239,10 +239,10 @@ library Position {
   /**
    * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function decodeStatic(bytes memory _blob) internal pure returns (uint32 x, uint32 y) {
-    x = (uint32(Bytes.slice4(_blob, 0)));
+  function decodeStatic(bytes memory _blob) internal pure returns (int32 x, int32 y) {
+    x = int32(uint32(Bytes.slice4(_blob, 0)));
 
-    y = (uint32(Bytes.slice4(_blob, 4)));
+    y = int32(uint32(Bytes.slice4(_blob, 4)));
   }
 
   /**
@@ -251,7 +251,7 @@ library Position {
    *
    *
    */
-  function decode(bytes memory _staticData, PackedCounter, bytes memory) internal pure returns (uint32 x, uint32 y) {
+  function decode(bytes memory _staticData, PackedCounter, bytes memory) internal pure returns (int32 x, int32 y) {
     (x, y) = decodeStatic(_staticData);
   }
 
@@ -279,7 +279,7 @@ library Position {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(uint32 x, uint32 y) internal pure returns (bytes memory) {
+  function encodeStatic(int32 x, int32 y) internal pure returns (bytes memory) {
     return abi.encodePacked(x, y);
   }
 
@@ -289,7 +289,7 @@ library Position {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(uint32 x, uint32 y) internal pure returns (bytes memory, PackedCounter, bytes memory) {
+  function encode(int32 x, int32 y) internal pure returns (bytes memory, PackedCounter, bytes memory) {
     bytes memory _staticData = encodeStatic(x, y);
 
     PackedCounter _encodedLengths;
