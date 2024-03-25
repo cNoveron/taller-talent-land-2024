@@ -1,12 +1,9 @@
-/*
- * Create the system calls that the client can use to ask
- * for changes in the World state (using the System contracts).
- */
-
-import { Has, HasValue, getComponentValue, runQuery } from "@latticexyz/recs";
+import { getComponentValue } from "@latticexyz/recs";
+import { singletonEntity } from "@latticexyz/store-sync/recs";
 import { uuid } from "@latticexyz/utils";
 import { ClientComponents } from "./createClientComponents";
 import { SetupNetworkResult } from "./setupNetwork";
+import { Direction } from "../direction";
 
 export type SystemCalls = ReturnType<typeof createSystemCalls>;
 
@@ -44,8 +41,29 @@ export function createSystemCalls(
       return;
     }
 
-    const tx = await worldContract.write.move([direction]);
-    await waitForTransaction(tx);
+    let { x, y } = position;
+    if (direction === Direction.North) {
+      y -= 1;
+    } else if (direction === Direction.East) {
+      x += 1;
+    } else if (direction === Direction.South) {
+      y += 1;
+    } else if (direction === Direction.West) {
+      x -= 1;
+    }
+
+    const positionId = uuid();
+    Position.addOverride(positionId, {
+      entity: playerEntity,
+      value: { x, y },
+    });
+
+    try {
+      const tx = await worldContract.write.move([direction]);
+      await waitForTransaction(tx);
+    } finally {
+      Position.removeOverride(positionId);
+    }
   };
 
   const spawn = async (x: number, y: number) => {
@@ -58,8 +76,24 @@ export function createSystemCalls(
       throw new Error("already spawned");
     }
 
-    const tx = await worldContract.write.spawn([x, y]);
-    await waitForTransaction(tx);
+    const positionId = uuid();
+    Position.addOverride(positionId, {
+      entity: playerEntity,
+      value: { x, y },
+    });
+    const playerId = uuid();
+    Player.addOverride(playerId, {
+      entity: playerEntity,
+      value: { value: true },
+    });
+
+    try {
+      const tx = await worldContract.write.spawn([x, y]);
+      await waitForTransaction(tx);
+    } finally {
+      Position.removeOverride(positionId);
+      Player.removeOverride(playerId);
+    }
   };
 
   const throwBall = async () => {
