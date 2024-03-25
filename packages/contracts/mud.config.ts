@@ -1,16 +1,22 @@
-import { mudConfig } from "@latticexyz/world/register";
+import { defineWorld } from "@latticexyz/world";
 
-export default mudConfig({
+export default defineWorld({
+  enums: {
+    Direction: ["North", "East", "South", "West"],
+  },
   tables: {
-    Counter: {
-      keySchema: {},
-      valueSchema: "uint32",
-    },
     Movable: 'bool',
     Player: 'bool',
     Position: {
-	dataStruct: false,
-	valueSchema: { x: 'uint32', y: 'uint32' } 
+      schema: {
+        id: "bytes32",
+        x: "int32",
+        y: "int32",
+      },
+      key: ["id"],
+      codegen: {
+        dataStruct: false,
+      },
     },
   },
 });
