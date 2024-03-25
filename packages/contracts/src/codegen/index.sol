@@ -7,3 +7,4 @@ import { Counter, CounterTableId } from "./tables/Counter.sol";
 import { Movable, MovableTableId } from "./tables/Movable.sol";
 import { Player, PlayerTableId } from "./tables/Player.sol";
 import { Position, PositionTableId } from "./tables/Position.sol";
+import { MapConfig } from "./tables/MapConfig.sol";
