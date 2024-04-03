@@ -2,7 +2,7 @@
 pragma solidity >=0.8.24;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { MapConfig, Movable, Obstruction, Player, Position } from "../codegen/index.sol";
+import { Encounterable, MapConfig, Movable, Obstruction, Player, Position } from "../codegen/index.sol";
 import { Direction } from "../codegen/common.sol";
 import { addressToEntityKey } from "../addressToEntityKey.sol";
 import { positionToEntityKey } from "../positionToEntityKey.sol";
@@ -23,6 +23,7 @@ contract MapSystem is System {
     Player.set(player, true);
     Position.set(player, x, y);
     Movable.set(player, true);
+    Encounterable.set(player, true);
   }
 
   function move(Direction direction) public {
