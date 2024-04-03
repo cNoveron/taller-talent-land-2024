@@ -2,7 +2,7 @@
 pragma solidity >=0.8.24;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { Encounterable, EncounterTrigger, MapConfig, Movable, Obstruction, Player, Position } from "../codegen/index.sol";
+import { Encounter, Encounterable, EncounterTrigger, MapConfig, Movable, Obstruction, Player, Position } from "../codegen/index.sol";
 import { Direction } from "../codegen/common.sol";
 import { addressToEntityKey } from "../addressToEntityKey.sol";
 import { positionToEntityKey } from "../positionToEntityKey.sol";
@@ -29,6 +29,7 @@ contract MapSystem is System {
   function move(Direction direction) public {
     bytes32 player = addressToEntityKey(_msgSender());
     require(Movable.get(player), "cannot move");
+    require(!Encounter.getExists(player), "cannot move during an encounter");
 
     (int32 x, int32 y) = Position.get(player);
     if (direction == Direction.North) {
@@ -54,7 +55,7 @@ contract MapSystem is System {
     if (Encounterable.get(player) && EncounterTrigger.get(position)) {
       uint256 rand = uint256(keccak256(abi.encode(player, position, blockhash(block.number - 1), block.prevrandao)));
       if (rand % 5 == 0) {
-        // TODO
+        startEncounter(player);
       }
     }
   }
