@@ -3,6 +3,7 @@ import { defineWorld } from "@latticexyz/world";
 export default defineWorld({
   enums: {
     Direction: ["North", "East", "South", "West"],
+    MonsterType: ["None", "Eagle", "Rat", "Caterpillar"],
     TerrainType: ["None", "TallGrass", "Boulder"],
   },
   tables: {
@@ -28,6 +29,7 @@ export default defineWorld({
         dataStruct: false,
       },
     },
+    Monster: "MonsterType",
     Movable: "bool",
     Obstruction: "bool",
     Player: "bool",
