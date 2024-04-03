@@ -6,6 +6,17 @@ export default defineWorld({
     TerrainType: ["None", "TallGrass", "Boulder"],
   },
   tables: {
+    Encounter: {
+      schema: {
+        player: "bytes32",
+        exists: "bool",
+        monster: "bytes32",
+        catchAttempts: "uint256",
+      },
+      key: ["player"],
+    },
+    EncounterTrigger: "bool",
+    Encounterable: "bool",
     MapConfig: {
       schema: {
         width: "uint32",
@@ -17,9 +28,9 @@ export default defineWorld({
         dataStruct: false,
       },
     },
-    Movable: 'bool',
+    Movable: "bool",
     Obstruction: "bool",
-    Player: 'bool',
+    Player: "bool",
     Position: {
       schema: {
         id: "bytes32",
